@@ -473,7 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Function to create share buttons HTML
-  function createShareButtons(name, details) {
+  function createShareButtons() {
     return `
       <div class="share-buttons">
         <span class="share-label">Share:</span>
@@ -506,11 +506,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const button = event.currentTarget;
     const platform = button.dataset.platform;
     
-    // Get activity details from the card
+    // Get activity details from the card using more specific selectors
     const activityCard = button.closest('.activity-card');
     const activityName = activityCard.querySelector('h4').textContent;
-    const activityDesc = activityCard.querySelector('p').textContent;
-    const scheduleText = activityCard.querySelector('p:nth-of-type(2)').textContent;
+    
+    // Get first paragraph (description) by selecting all p tags and filtering
+    const paragraphs = activityCard.querySelectorAll('p');
+    const activityDesc = paragraphs[0] ? paragraphs[0].textContent : '';
+    
+    // Get schedule paragraph (second paragraph, or look for one with "Schedule:")
+    let scheduleText = '';
+    for (let p of paragraphs) {
+      if (p.textContent.includes('Schedule:')) {
+        scheduleText = p.textContent;
+        break;
+      }
+    }
     
     // Build share text
     const shareText = `Check out ${activityName} at Mergington High School! ${activityDesc} ${scheduleText}`;
@@ -520,7 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     switch(platform) {
       case 'twitter':
-        shareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+        shareLink = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
         break;
       case 'facebook':
         shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
