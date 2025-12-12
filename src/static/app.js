@@ -25,6 +25,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
 
+  // Theme toggle elements
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeIcon = themeToggle.querySelector(".theme-icon");
+  const themeLabel = document.getElementById("theme-label");
+
   // Activity categories with corresponding colors
   const activityTypes = {
     sports: { label: "Sports", color: "#e8f5e9", textColor: "#2e7d32" },
@@ -43,6 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Authentication state
   let currentUser = null;
+
+  // Theme state
+  let isDarkMode = false;
 
   // Time range mappings for the dropdown
   const timeRanges = {
@@ -97,6 +105,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchActivities();
   }
+
+  // Theme toggle functions
+  function initializeTheme() {
+    // Check if user has a saved theme preference
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      enableDarkMode();
+    } else {
+      disableDarkMode();
+    }
+  }
+
+  function enableDarkMode() {
+    isDarkMode = true;
+    document.body.classList.add("dark-mode");
+    themeIcon.textContent = "☀️";
+    themeLabel.textContent = "Light";
+    localStorage.setItem("theme", "dark");
+  }
+
+  function disableDarkMode() {
+    isDarkMode = false;
+    document.body.classList.remove("dark-mode");
+    themeIcon.textContent = "🌙";
+    themeLabel.textContent = "Dark";
+    localStorage.setItem("theme", "light");
+  }
+
+  function toggleTheme() {
+    if (isDarkMode) {
+      disableDarkMode();
+    } else {
+      enableDarkMode();
+    }
+  }
+
+  // Event listener for theme toggle
+  themeToggle.addEventListener("click", toggleTheme);
 
   // Check if user is already logged in (from localStorage)
   function checkAuthentication() {
@@ -862,6 +908,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Initialize app
+  initializeTheme();
   checkAuthentication();
   initializeFilters();
   fetchActivities();
